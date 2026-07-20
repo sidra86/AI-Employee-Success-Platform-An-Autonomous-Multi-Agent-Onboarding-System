@@ -6,18 +6,6 @@ Formerly the CrewAI Employee Onboarding System — now upgraded into a productio
 
 ---
 
-## Demo
-
-*(Add video / GIF / screenshots here)*
-
-Suggested captures:
-- Dashboard with employee progress
-- Knowledge base PDF upload + search
-- Manager insights (gaps, risk, agent traces)
-- Employee mentor memory profile
-
----
-
 ## Why this project
 
 ### Problem
