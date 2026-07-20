@@ -7,6 +7,18 @@ Full docs: **[crew ai/README.md](./crew%20ai/README.md)**
 
 ---
 
+## Demo
+
+*(Add video / GIF / screenshots here)*
+
+Suggested captures:
+- Dashboard with employee progress
+- Knowledge base PDF upload + search
+- Manager insights (gaps, risk, agent traces)
+- Employee mentor memory profile
+
+---
+
 ## Why this project
 
 ### Problem
@@ -16,7 +28,20 @@ Traditional employee onboarding is static, one-size-fits-all, and hard to scale.
 An autonomous multi-agent system that plans onboarding, retrieves company knowledge with RAG, generates adaptive quizzes, evaluates AI output quality, and mentors each employee using persistent digital memory — all with manager insights and execution traces.
 
 ### Impact
-Faster, personalized onboarding; fewer knowledge gaps; clear risk signals for managers; and a portfolio-ready demo of production-style agentic AI (planner, tools, RAG, memory, evaluator, observability).
+Faster, personalized onboarding; fewer knowledge gaps; clear risk signals for managers; and a production-style prototype of agentic AI (planner, tools, RAG, memory, evaluator, observability).
+
+---
+
+## Tech Stack
+
+- Python
+- FastAPI
+- CrewAI-compatible multi-agent architecture
+- ChromaDB
+- RAG pipeline
+- Docker
+- SQLite
+- LLM integration (OpenAI-compatible)
 
 ---
 

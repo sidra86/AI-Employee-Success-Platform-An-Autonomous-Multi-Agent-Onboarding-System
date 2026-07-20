@@ -6,6 +6,18 @@ Formerly the CrewAI Employee Onboarding System — now upgraded into a productio
 
 ---
 
+## Demo
+
+*(Add video / GIF / screenshots here)*
+
+Suggested captures:
+- Dashboard with employee progress
+- Knowledge base PDF upload + search
+- Manager insights (gaps, risk, agent traces)
+- Employee mentor memory profile
+
+---
+
 ## Why this project
 
 ### Problem
@@ -19,6 +31,19 @@ AetherSuccess orchestrates specialized AI agents (Planner → RAG → Quiz → V
 - Grounded answers from uploaded handbooks and policies (RAG)
 - Quality-gated AI outputs before employees see them
 - Manager visibility into risk, gaps, completion, and agent activity
+
+---
+
+## Tech Stack
+
+- Python
+- FastAPI
+- CrewAI-compatible multi-agent architecture
+- ChromaDB
+- RAG pipeline
+- Docker
+- SQLite
+- LLM integration (OpenAI-compatible)
 
 ---
 
