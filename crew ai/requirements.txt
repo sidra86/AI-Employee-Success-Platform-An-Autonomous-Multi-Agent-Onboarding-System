@@ -1,0 +1,28 @@
+# Core web stack
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.6.0
+sqlalchemy>=2.0.25
+python-multipart>=0.0.9
+jinja2>=3.1.3
+python-dotenv>=1.0.0
+requests>=2.31.0
+
+# Optional LLM / CrewAI (system falls back to mock_crew if unavailable)
+openai>=1.12.0
+# crewai==0.193.2
+# crewai-tools
+# langchain>=0.1.0
+# langchain-openai>=0.0.5
+
+# RAG / documents
+chromadb>=0.4.22
+pypdf>=4.0.0
+
+# Auth helpers (existing)
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+
+# Analytics helpers (optional dashboards)
+pandas>=2.1.0
+plotly>=5.17.0

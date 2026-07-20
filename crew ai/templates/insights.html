@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Manager Insights - AetherSuccess{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h2 class="mb-1"><i class="fas fa-chart-line me-2"></i>Manager Insights</h2>
+    <p class="text-muted mb-0">Completion rates, risk prediction, knowledge gaps, and AI recommendations</p>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card h-100"><div class="card-body">
+            <div class="text-muted">Completion rate</div>
+            <h2>{{ completion_rate }}%</h2>
+        </div></div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card h-100"><div class="card-body">
+            <div class="text-muted">Avg confidence</div>
+            <h2>{{ '%.0f'|format((insights.avg_confidence or 0) * 100) }}%</h2>
+        </div></div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card h-100"><div class="card-body">
+            <div class="text-muted">Avg engagement</div>
+            <h2>{{ '%.0f'|format((insights.avg_engagement or 0) * 100) }}%</h2>
+        </div></div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card h-100"><div class="card-body">
+            <div class="text-muted">Profiles tracked</div>
+            <h2>{{ insights.profiles_tracked }}</h2>
+        </div></div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-6 mb-3">
+        <div class="card h-100">
+            <div class="card-header bg-white"><strong>Employees Needing Assistance</strong></div>
+            <div class="card-body">
+                {% if insights.employees_needing_assistance %}
+                {% for item in insights.employees_needing_assistance %}
+                {% set emp = employees|selectattr('id', 'equalto', item.employee_id)|list|first %}
+                <div class="border rounded p-3 mb-2">
+                    <div class="d-flex justify-content-between">
+                        <strong>{{ emp.name if emp else ('Employee #' ~ item.employee_id) }}</strong>
+                        <span class="badge {% if item.risk_level == 'high' %}bg-danger{% else %}bg-warning text-dark{% endif %}">{{ item.risk_level }} risk</span>
+                    </div>
+                    <small class="text-muted">Weak: {{ item.weak_topics|join(', ') if item.weak_topics else '—' }}</small>
+                    <div class="mt-1">
+                        {% for rec in item.recommendations[:3] %}
+                        <span class="badge bg-light text-dark">{{ rec }}</span>
+                        {% endfor %}
+                    </div>
+                    <a class="small" href="/employees/{{ item.employee_id }}">Open profile →</a>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p class="text-muted mb-0">No at-risk employees detected.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 mb-3">
+        <div class="card h-100">
+            <div class="card-header bg-white"><strong>Knowledge Gap Analysis</strong></div>
+            <div class="card-body">
+                {% for gap in insights.knowledge_gaps %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>{{ gap.topic }}</span>
+                        <span>{{ gap.employees_affected }}</span>
+                    </div>
+                    <div class="progress" style="height:8px;">
+                        <div class="progress-bar bg-warning" style="width: {{ [gap.employees_affected * 20, 100]|min }}%"></div>
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">Gaps appear after quizzes update digital memory.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-white"><strong>AI Mentor Insights by Employee</strong></div>
+    <div class="card-body table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Risk</th>
+                    <th>Confidence</th>
+                    <th>Style</th>
+                    <th>Next modules</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for emp in employees %}
+                {% set mem = profile_map.get(emp.id) %}
+                <tr>
+                    <td><a href="/employees/{{ emp.id }}">{{ emp.name }}</a></td>
+                    <td>{{ mem.risk_level if mem else '—' }}</td>
+                    <td>{{ '%.0f'|format((mem.confidence_score or 0) * 100) if mem else '—' }}%</td>
+                    <td>{{ mem.preferred_learning_style if mem else '—' }}</td>
+                    <td>
+                        {% if mem and mem.recommended_next_modules %}
+                        {{ mem.recommended_next_modules[:2]|join(' · ') }}
+                        {% else %}—{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-white"><strong>Agent Workflow Observability</strong></div>
+    <div class="card-body">
+        {% for t in traces %}
+        <div class="border rounded p-3 mb-2">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <code>{{ t.trace_id }}</code>
+                    <div class="small text-muted">Employee #{{ t.employee_id or '—' }} · {{ t.created_at }}</div>
+                </div>
+                <div class="text-end">
+                    <span class="badge {% if t.status == 'ok' %}bg-success{% else %}bg-danger{% endif %}">{{ t.status }}</span>
+                    <div class="small text-muted">{{ t.duration_ms }} ms · {{ t.total_tokens_estimate }} tok</div>
+                </div>
+            </div>
+            <div class="mt-2 small">
+                <strong>Agents:</strong> {{ t.agents_run }}
+                <br>
+                <strong>Tools:</strong> {{ t.tools_used }}
+            </div>
+        </div>
+        {% else %}
+        <p class="text-muted mb-0">Run an onboarding workflow to populate traces.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

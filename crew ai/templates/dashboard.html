@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - AetherSuccess{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1"><i class="fas fa-tachometer-alt me-2"></i>Employee Success Dashboard</h2>
+        <p class="text-muted mb-0">Live completion, knowledge gaps, and recent agent activity</p>
+    </div>
+    <button class="btn btn-primary" onclick="showAddEmployeeModal()">
+        <i class="fas fa-plus me-2"></i>Add Employee
+    </button>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card bg-primary text-white h-100">
+            <div class="card-body">
+                <h4>{{ employees|length }}</h4>
+                <p class="mb-0">Total Employees</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success text-white h-100">
+            <div class="card-body">
+                <h4>{{ employees|selectattr("onboarding_status", "equalto", "completed")|list|length }}</h4>
+                <p class="mb-0">Completed</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-white h-100" style="background:#0f766e;">
+            <div class="card-body">
+                <h4>{{ insights.employees_needing_assistance|length }}</h4>
+                <p class="mb-0">Need Assistance</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-dark text-white h-100">
+            <div class="card-body">
+                <h4>{{ rag_stats.chunk_count }}</h4>
+                <p class="mb-0">RAG Chunks ({{ rag_stats.backend }})</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-6 mb-3">
+        <div class="card h-100">
+            <div class="card-header bg-white"><strong>Knowledge Gaps</strong></div>
+            <div class="card-body">
+                {% if insights.knowledge_gaps %}
+                <ul class="list-group list-group-flush">
+                    {% for gap in insights.knowledge_gaps[:5] %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ gap.topic }}</span>
+                        <span class="badge bg-warning text-dark">{{ gap.employees_affected }} employees</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted mb-0">No gaps yet — run onboarding to populate digital memory.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 mb-3">
+        <div class="card h-100">
+            <div class="card-header bg-white"><strong>Recent Agent Activity</strong></div>
+            <div class="card-body">
+                {% if recent_traces %}
+                {% for t in recent_traces %}
+                <div class="d-flex justify-content-between border-bottom py-2">
+                    <div>
+                        <div class="fw-semibold">{{ t.workflow }} · emp #{{ t.employee_id or '—' }}</div>
+                        <small class="text-muted">{{ t.duration_ms }} ms · {{ t.total_tokens_estimate }} tokens</small>
+                    </div>
+                    <span class="badge {% if t.status == 'ok' %}bg-success{% else %}bg-danger{% endif %}">{{ t.status }}</span>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p class="text-muted mb-0">No agent traces yet.</p>
+                {% endif %}
+                <a href="/insights" class="btn btn-sm btn-outline-secondary mt-3">Full insights →</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Employee List</h5>
+    </div>
+    <div class="card-body">
+        {% if employees %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Position</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for employee in employees %}
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">{{ employee.name }}</div>
+                            <small class="text-muted">{{ employee.email }}</small>
+                        </td>
+                        <td>{{ employee.department }}</td>
+                        <td>{{ employee.position }}</td>
+                        <td>
+                            <span class="badge
+                                {% if employee.onboarding_status == 'completed' %}bg-success
+                                {% elif employee.onboarding_status == 'in_progress' %}bg-warning text-dark
+                                {% else %}bg-secondary{% endif %}">
+                                {{ employee.onboarding_status }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="/employees/{{ employee.id }}" class="btn btn-sm btn-outline-primary">View</a>
+                            <button class="btn btn-sm btn-primary" onclick="startOnboarding({{ employee.id }})">Start AI Onboarding</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">No employees yet. Add one to begin.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function startOnboarding(id) {
+    if (!confirm('Run autonomous Planner → RAG → Agents → Mentor workflow?')) return;
+    const btn = event.target;
+    btn.disabled = true;
+    btn.textContent = 'Running agents...';
+    try {
+        const res = await fetch(`/employees/${id}/start-onboarding`, { method: 'POST' });
+        const data = await res.json();
+        if (res.ok) {
+            alert('Onboarding complete. Trace: ' + (data.results?.trace?.trace_id || 'saved'));
+            location.href = `/employees/${id}`;
+        } else {
+            alert('Error: ' + (data.detail || 'failed'));
+            btn.disabled = false;
+            btn.textContent = 'Start AI Onboarding';
+        }
+    } catch (e) {
+        alert(e.message);
+        btn.disabled = false;
+        btn.textContent = 'Start AI Onboarding';
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Adaptive AI Employee Success Platform{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-body p-5">
+        <span class="brand-badge">Autonomous Agentic AI</span>
+        <h1 class="display-5 mt-3 mb-3">Adaptive AI Employee Success Platform</h1>
+        <p class="lead text-muted mb-4" style="max-width: 720px;">
+            AetherSuccess orchestrates Planner, RAG, Quiz, Video, Progress, Feedback, Evaluator,
+            and Mentor agents with persistent digital memory — so every employee gets a personal AI mentor
+            that learns from quizzes, weak topics, and engagement over time.
+        </p>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="/dashboard" class="btn btn-primary btn-lg">
+                <i class="fas fa-tachometer-alt me-2"></i>Open Dashboard
+            </a>
+            <a href="/knowledge" class="btn btn-outline-secondary btn-lg">
+                <i class="fas fa-book me-2"></i>Upload Knowledge
+            </a>
+            <a href="/insights" class="btn btn-outline-secondary btn-lg">
+                <i class="fas fa-chart-line me-2"></i>Manager Insights
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <i class="fas fa-database fa-2x text-success mb-3"></i>
+                <h5>RAG Knowledge Base</h5>
+                <p class="text-muted mb-0">Upload handbooks, SOPs, and policies. Agents retrieve grounded context before answering.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <i class="fas fa-user-graduate fa-2x text-warning mb-3"></i>
+                <h5>Adaptive AI Mentor</h5>
+                <p class="text-muted mb-0">Persistent memory of weak/strong topics, learning style, confidence, and personalized roadmaps.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <i class="fas fa-project-diagram fa-2x text-primary mb-3"></i>
+                <h5>Planner + Evaluator</h5>
+                <p class="text-muted mb-0">A planner chooses the next agent. An evaluator quality-gates quizzes and feedback with auto-regeneration.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="mb-3">Autonomous Agent Workflow</h5>
+        <p class="mb-2 text-muted">Employee joins → Planner → RAG → Quiz / Video → Progress → Feedback → Evaluator → Mentor → Memory → Notify</p>
+        <div class="d-flex flex-wrap gap-2">
+            <span class="badge bg-dark">Planner</span>
+            <span class="badge bg-success">RAG</span>
+            <span class="badge bg-primary">Quiz</span>
+            <span class="badge bg-info text-dark">Video</span>
+            <span class="badge bg-secondary">Progress</span>
+            <span class="badge bg-warning text-dark">Feedback</span>
+            <span class="badge bg-danger">Evaluator</span>
+            <span class="badge bg-teal" style="background:#0f766e;">Mentor</span>
+            <span class="badge bg-light text-dark">Memory</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

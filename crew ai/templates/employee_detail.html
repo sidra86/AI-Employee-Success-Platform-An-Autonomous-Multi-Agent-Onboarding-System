@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}{{ employee.name }} - AetherSuccess{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h2 class="mb-1">{{ employee.name }}</h2>
+        <p class="text-muted mb-0">{{ employee.position }} · {{ employee.department }} · {{ employee.email }}</p>
+    </div>
+    <div class="text-end">
+        <div class="display-6 fw-bold" style="color:#0f766e;">{{ '%.0f'|format(completion_percentage or 0) }}%</div>
+        <small class="text-muted">Completion</small>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card h-100"><div class="card-body">
+            <div class="text-muted">Confidence</div>
+            <h4>{{ '%.0f'|format((memory.confidence_score or 0) * 100) }}%</h4>
+        </div></div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card h-100"><div class="card-body">
+            <div class="text-muted">Engagement</div>
+            <h4>{{ '%.0f'|format((memory.engagement_score or 0) * 100) }}%</h4>
+        </div></div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card h-100"><div class="card-body">
+            <div class="text-muted">Risk</div>
+            <h4 class="text-capitalize">{{ memory.risk_level or 'low' }}</h4>
+        </div></div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card h-100"><div class="card-body">
+            <div class="text-muted">Learning style</div>
+            <h5 class="mb-0">{{ memory.preferred_learning_style or 'mixed' }}</h5>
+        </div></div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-6 mb-3">
+        <div class="card h-100">
+            <div class="card-header bg-white"><strong>Adaptive Mentor Memory</strong></div>
+            <div class="card-body">
+                <p><strong>Strong topics:</strong> {{ memory.strong_topics|join(', ') if memory.strong_topics else '—' }}</p>
+                <p><strong>Weak topics:</strong> {{ memory.weak_topics|join(', ') if memory.weak_topics else '—' }}</p>
+                <p><strong>Recommendations:</strong></p>
+                <ul>
+                    {% for r in memory.recommended_next_modules or [] %}
+                    <li>{{ r }}</li>
+                    {% else %}
+                    <li class="text-muted">Run onboarding to generate mentor recommendations.</li>
+                    {% endfor %}
+                </ul>
+                <p class="mb-1"><strong>Roadmap</strong></p>
+                {% for step in memory.personalized_roadmap or [] %}
+                <span class="badge bg-light text-dark me-1 mb-1">{{ step.module }} ({{ step.action }})</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 mb-3">
+        <div class="card h-100">
+            <div class="card-header bg-white"><strong>Progress Timeline</strong></div>
+            <div class="card-body">
+                {% for event in timeline %}
+                <div class="timeline-item">
+                    <div class="fw-semibold">{{ event.label }}</div>
+                    <small class="text-muted">{{ event.at }} · {{ event.type }}</small>
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">No timeline events yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-6 mb-3">
+        <div class="card h-100">
+            <div class="card-header bg-white"><strong>Quiz Results</strong></div>
+            <div class="card-body">
+                {% if quiz_results %}
+                <ul class="list-group list-group-flush">
+                    {% for q in quiz_results %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Score {{ q.score }} / {{ q.total_questions }}</span>
+                        <small class="text-muted">{{ q.completed_at }}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted mb-0">No quizzes yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 mb-3">
+        <div class="card h-100">
+            <div class="card-header bg-white"><strong>Agent Activity Logs</strong></div>
+            <div class="card-body">
+                {% for t in traces %}
+                <div class="border-bottom py-2">
+                    <div class="d-flex justify-content-between">
+                        <span class="fw-semibold">{{ t.trace_id[:8] }}…</span>
+                        <span class="badge {% if t.status == 'ok' %}bg-success{% else %}bg-danger{% endif %}">{{ t.status }}</span>
+                    </div>
+                    <small class="text-muted">{{ t.duration_ms }} ms · tokens {{ t.total_tokens_estimate }}</small>
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">No agent runs for this employee yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex gap-2">
+    <button class="btn btn-primary" onclick="startOnboarding({{ employee.id }})">
+        <i class="fas fa-robot me-2"></i>Run Autonomous Onboarding
+    </button>
+    <a href="/dashboard" class="btn btn-outline-secondary">Back</a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function startOnboarding(id) {
+    if (!confirm('Start planner-driven autonomous onboarding?')) return;
+    const res = await fetch(`/employees/${id}/start-onboarding`, { method: 'POST' });
+    const data = await res.json();
+    if (res.ok) location.reload();
+    else alert(data.detail || 'Failed');
+}
+</script>
+{% endblock %}
