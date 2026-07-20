@@ -18,8 +18,8 @@ def check_requirements():
         return False
     
     # Check if .env file exists
-    if not Path(".env").exists() and not Path("env_example.txt").exists():
-        print("❌ Environment file not found. Please create .env file with your OpenAI API key")
+    if not Path(".env").exists() and not Path(".env.example").exists() and not Path("env_example.txt").exists():
+        print("❌ Environment file not found. Please create .env from .env.example")
         return False
     
     # Check if requirements.txt exists
@@ -47,11 +47,11 @@ def setup_environment():
     print("🔧 Setting up environment...")
     
     if not Path(".env").exists():
-        if Path("env_example.txt").exists():
-            # Copy example file
-            with open("env_example.txt", "r") as src, open(".env", "w") as dst:
+        source = Path(".env.example") if Path(".env.example").exists() else Path("env_example.txt")
+        if source.exists():
+            with open(source, "r") as src, open(".env", "w") as dst:
                 dst.write(src.read())
-            print("📝 Created .env file from example. Please edit it with your API keys.")
+            print(f"📝 Created .env file from {source.name}. Edit it with your API keys if needed.")
         else:
             # Create basic .env file
             with open(".env", "w") as f:

@@ -6,6 +6,22 @@ Formerly the CrewAI Employee Onboarding System — now upgraded into a productio
 
 ---
 
+## Why this project
+
+### Problem
+Employee onboarding is often manual, generic, and poorly tracked. Companies struggle to personalize learning, surface knowledge gaps early, and prove that new hires actually understand policies and role expectations.
+
+### Solution
+AetherSuccess orchestrates specialized AI agents (Planner → RAG → Quiz → Video → Progress → Feedback → Evaluator → Mentor → Memory) with tool calling, document retrieval, and persistent learning profiles so every employee gets an adaptive mentor — not a fixed checklist.
+
+### Impact
+- Personalized onboarding paths based on weak/strong topics
+- Grounded answers from uploaded handbooks and policies (RAG)
+- Quality-gated AI outputs before employees see them
+- Manager visibility into risk, gaps, completion, and agent activity
+
+---
+
 ## What makes this different
 
 | Capability | Description |
@@ -173,8 +189,12 @@ cd "crew ai"
 python -m venv venv
 # Windows:
 venv\Scripts\activate
+# macOS / Linux:
+# source venv/bin/activate
+
 pip install -r requirements.txt
-copy env_example.txt .env
+copy .env.example .env          # Windows
+# cp .env.example .env          # macOS / Linux
 # Optional: set OPENAI_API_KEY in .env
 
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
@@ -193,7 +213,7 @@ Useful routes after startup:
 ## Docker
 
 ```bash
-cp env_example.txt .env
+cp .env.example .env
 # set OPENAI_API_KEY if desired
 docker-compose up --build
 ```
