@@ -177,16 +177,16 @@ pip install -r requirements.txt
 copy env_example.txt .env
 # Optional: set OPENAI_API_KEY in .env
 
-uvicorn app.main:app --reload --host 127.0.0.1 --port 8025
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-Open:
+Useful routes after startup:
 
-- Home: `http://127.0.0.1:8025/`
-- Dashboard: `http://127.0.0.1:8025/dashboard`
-- Knowledge: `http://127.0.0.1:8025/knowledge`
-- Insights: `http://127.0.0.1:8025/insights`
-- Health: `http://127.0.0.1:8025/health`
+- `/` — Home
+- `/dashboard` — Dashboard
+- `/knowledge` — Knowledge Base
+- `/insights` — Manager Insights
+- `/health` — Health check
 
 ---
 
@@ -198,9 +198,7 @@ cp env_example.txt .env
 docker-compose up --build
 ```
 
-App: `http://localhost:8000`
-
-Volumes persist `./data` (SQLite, Chroma, uploads).
+The app runs on port **8000**. Volumes persist `./data` (SQLite, Chroma, uploads).
 
 ---
 

@@ -81,8 +81,8 @@ def create_demo_data():
 def start_server():
     """Start the FastAPI server"""
     print("🚀 Starting the server...")
-    print("📍 Server will be available at: http://localhost:8000")
-    print("📊 Dashboard: http://localhost:8000/dashboard")
+    print("📍 Server will be available on port 8000")
+    print("📊 Dashboard: /dashboard")
     print("\n🔑 Make sure to set your OPENAI_API_KEY in the .env file!")
     print("\n⏹️  Press Ctrl+C to stop the server\n")
     
